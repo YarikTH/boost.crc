@@ -93,6 +93,14 @@ template<int Bits> struct uint_t:
 // form.
 #define BOOST_CRC_PARM_TYPE  typename ::boost::crc_detail::uint_t<Bits>::fast
 
+#if __cplusplus >= 201703L && __cpp_inline_variables
+#   define BOOST_CRC_CONSTEXPR_ENABLED 1
+#   define BOOST_CRC_CONSTEXPR constexpr
+#else
+#   define BOOST_CRC_CONSTEXPR_ENABLED 0
+#   define BOOST_CRC_CONSTEXPR
+#endif
+
 namespace boost
 {
 
@@ -194,43 +202,43 @@ public:
 
     // Constructor (use the automatic copy-ctr, move-ctr, and dtr)
     //! Create a computer, separately listing each needed parameter
-    explicit  crc_basic( value_type truncated_polynomial,
+    BOOST_CRC_CONSTEXPR  explicit  crc_basic( value_type truncated_polynomial,
                value_type initial_remainder = 0, value_type final_xor_value = 0,
                bool reflect_input = false, bool reflect_remainder = false );
 
     // Internal Operations
     //! Return the (truncated) polynomial divisor
-    value_type  get_truncated_polynominal() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_truncated_polynominal() const;
     //! Return what the polynomial remainder was set to during construction
-    value_type  get_initial_remainder() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_initial_remainder() const;
     //! Return the XOR-mask used during output processing
-    value_type  get_final_xor_value() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_final_xor_value() const;
     //! Check if input-bytes will be reflected before processing
-    bool        get_reflect_input() const;
+    BOOST_CRC_CONSTEXPR  bool        get_reflect_input() const;
     //! Check if the remainder will be reflected during output processing
-    bool        get_reflect_remainder() const;
+    BOOST_CRC_CONSTEXPR  bool        get_reflect_remainder() const;
 
     //! Return the remainder based from already-processed bits
-    value_type  get_interim_remainder() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_interim_remainder() const;
     //! Change the interim remainder to a new value
-    void        reset( value_type new_rem );
+    BOOST_CRC_CONSTEXPR  void        reset( value_type new_rem );
     //! Change the interim remainder back to the initial value
-    void        reset();
+    BOOST_CRC_CONSTEXPR  void        reset();
 
     // External Operations
     //! Submit a single bit for input processing
-    void  process_bit( bool bit );
+    BOOST_CRC_CONSTEXPR  void  process_bit( bool bit );
     //! Submit the lowest \a bit_length bits of a byte for input processing
-    void  process_bits( unsigned char bits, std::size_t bit_length );
+    BOOST_CRC_CONSTEXPR  void  process_bits( unsigned char bits, std::size_t bit_length );
     //! Submit a single byte for input processing
-    void  process_byte( unsigned char byte );
+    BOOST_CRC_CONSTEXPR  void  process_byte( unsigned char byte );
     //! Submit a memory block for input processing, iterator-pair style
     void  process_block( void const *bytes_begin, void const *bytes_end );
     //! Submit a memory block for input processing, pointer-and-size style
     void  process_bytes( void const *buffer, std::size_t byte_count );
 
     //! Return the checksum of the already-processed bits
-    value_type  checksum() const;
+    BOOST_CRC_CONSTEXPR  value_type  checksum() const;
 
 private:
     // Member data
@@ -298,41 +306,41 @@ public:
 
     // Constructor (use the automatic copy-ctr, move-ctr, and dtr)
     //! Create a computer, giving an initial remainder if desired
-    explicit  crc_optimal( value_type init_rem = initial_remainder );
+    BOOST_CRC_CONSTEXPR  explicit  crc_optimal( value_type init_rem = initial_remainder );
 
     // Internal Operations
     //! \copybrief  boost::crc_basic::get_truncated_polynominal
-    value_type  get_truncated_polynominal() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_truncated_polynominal() const;
     //! \copybrief  boost::crc_basic::get_initial_remainder
-    value_type  get_initial_remainder() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_initial_remainder() const;
     //! \copybrief  boost::crc_basic::get_final_xor_value
-    value_type  get_final_xor_value() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_final_xor_value() const;
     //! \copybrief  boost::crc_basic::get_reflect_input
-    bool        get_reflect_input() const;
+    BOOST_CRC_CONSTEXPR  bool        get_reflect_input() const;
     //! \copybrief  boost::crc_basic::get_reflect_remainder
-    bool        get_reflect_remainder() const;
+    BOOST_CRC_CONSTEXPR  bool        get_reflect_remainder() const;
 
     //! \copybrief  boost::crc_basic::get_interim_remainder
-    value_type  get_interim_remainder() const;
+    BOOST_CRC_CONSTEXPR  value_type  get_interim_remainder() const;
     //! Change the interim remainder to either a given value or the initial one
-    void        reset( value_type new_rem = initial_remainder );
+    BOOST_CRC_CONSTEXPR  void        reset( value_type new_rem = initial_remainder );
 
     // External Operations
     //! \copybrief  boost::crc_basic::process_byte
-    void  process_byte( unsigned char byte );
+    BOOST_CRC_CONSTEXPR  void  process_byte( unsigned char byte );
     //! \copybrief  boost::crc_basic::process_block
     void  process_block( void const *bytes_begin, void const *bytes_end );
     //! \copybrief  boost::crc_basic::process_bytes
     void  process_bytes( void const *buffer, std::size_t byte_count );
 
     //! \copybrief  boost::crc_basic::checksum
-    value_type  checksum() const;
+    BOOST_CRC_CONSTEXPR  value_type  checksum() const;
 
     // Operators
     //! Submit a single byte for input processing, suitable for the STL
-    void        operator ()( unsigned char byte );
+    BOOST_CRC_CONSTEXPR  void        operator ()( unsigned char byte );
     //! Return the checksum of the already-processed bits, suitable for the STL
-    value_type  operator ()() const;
+    BOOST_CRC_CONSTEXPR  value_type  operator ()() const;
 
 private:
     // Implementation types
@@ -415,7 +423,7 @@ namespace detail
         \todo  Check if this is the fastest way.
      */
     template < typename Unsigned >
-    Unsigned  reflect_unsigned( Unsigned x, int word_length
+    BOOST_CRC_CONSTEXPR  Unsigned  reflect_unsigned( Unsigned x, int word_length
      = std::numeric_limits<Unsigned>::digits )
     {
         for ( Unsigned  l = 1u, h = static_cast<Unsigned>(l << (word_length - 1)) ; h > l ; h >>= 1, l
@@ -430,6 +438,12 @@ namespace detail
         return x;
     }
 
+    /** \brief  The type of byte-to-byte-reflection map
+
+        This map type is used as an implementation for #reflect_byte.
+     */
+    typedef std::array< unsigned char, (UINTMAX_C( 1 ) << CHAR_BIT) >  byte_reflection_table_type;
+
     /** \brief  Make a byte-to-byte-reflection map
 
         Creates a mapping array so the results can be cached.  Uses
@@ -439,16 +453,44 @@ namespace detail
           <var>i</var>, <code><var>a</var>[ <var>i</var> ]</code> resolves to
           the reflected value of <var>i</var>.
      */
-    std::array< unsigned char, (UINTMAX_C( 1 ) << CHAR_BIT) >
-    inline make_byte_reflection_table()
+    byte_reflection_table_type
+    BOOST_CRC_CONSTEXPR  inline make_byte_reflection_table()
     {
-        std::array<unsigned char, ( UINTMAX_C(1) << CHAR_BIT )>  result;
+        std::array<unsigned char, ( UINTMAX_C(1) << CHAR_BIT )>  result{};
         unsigned char                                              i = 0u;
 
         do
             result[ i ] = reflect_unsigned( i );
         while ( ++i );
         return result;
+    }
+
+#if BOOST_CRC_CONSTEXPR_ENABLED
+    /** \brief A global byte-to-byte-reflection map
+
+     */
+    constexpr byte_reflection_table_type reflection_table_type = make_byte_reflection_table();
+#endif
+
+    /** \brief  Create a byte-to-byte-reflection map
+
+        Creates a mapping array so the results can be cached.  Uses
+        #reflect_unsigned to generate the element values.
+
+        \return  An array <var>a</var> such that, for a given byte value
+          <var>i</var>, <code><var>a</var>[ <var>i</var> ]</code> resolves to
+          the reflected value of <var>i</var>.
+     */
+    BOOST_CRC_CONSTEXPR  static  byte_reflection_table_type const &  get_byte_reflection_table()
+    {
+#if BOOST_CRC_CONSTEXPR_ENABLED
+        return reflection_table_type;
+#else
+        static  byte_reflection_table_type const  table =
+         make_byte_reflection_table();
+
+        return table;
+#endif
     }
 
     /** \brief  Reflects the bits of a single byte
@@ -466,10 +508,10 @@ namespace detail
           number of states is relatively small, the implementation pre-computes
           and uses a table of all the results.
      */
-    inline unsigned char  reflect_byte( unsigned char x )
+    BOOST_CRC_CONSTEXPR  inline unsigned char  reflect_byte( unsigned char x )
     {
-        static  std::array<unsigned char, ( UINTMAX_C(1) << CHAR_BIT )> const
-          table = make_byte_reflection_table();
+        byte_reflection_table_type const &
+          table = get_byte_reflection_table();
 
         return table[ x ];
     }
@@ -486,7 +528,7 @@ namespace detail
 
         \return  The (partially) reflected value.
      */
-    inline  unsigned char  reflect_sub_byte( unsigned char x, int word_length )
+    BOOST_CRC_CONSTEXPR  inline  unsigned char  reflect_sub_byte( unsigned char x, int word_length )
     { return reflect_byte(x) >> (CHAR_BIT - word_length); }
 
     /** \brief  Possibly reflects the bits of a number
@@ -514,6 +556,7 @@ namespace detail
      */
     template < typename Unsigned >
     inline
+    BOOST_CRC_CONSTEXPR
     Unsigned  reflect_optionally( Unsigned x, bool reflect, int word_length
      = std::numeric_limits<Unsigned>::digits )
     { return reflect ? reflect_unsigned(x, word_length) : x; }
@@ -529,6 +572,7 @@ namespace detail
           <var>x</var></code>
      */
     inline
+    BOOST_CRC_CONSTEXPR
     unsigned char  reflect_byte_optionally( unsigned char x, bool reflect )
     { return reflect ? reflect_byte(x) : x; }
 
@@ -580,6 +624,7 @@ namespace detail
           the final CRC.
      */
     template < typename Register, typename Word >
+    BOOST_CRC_CONSTEXPR
     void  crc_modulo_word_update( int register_length, Register &remainder, Word
      new_dividend_bits, Register truncated_divisor, int word_length, bool
      reflect )
@@ -649,7 +694,7 @@ namespace detail
           the final CRC.
      */
     template < typename Register >
-    inline  void  crc_modulo_update( int register_length, Register &remainder,
+    BOOST_CRC_CONSTEXPR  inline  void  crc_modulo_update( int register_length, Register &remainder,
      bool new_dividend_bit, Register truncated_divisor )
     {
         crc_modulo_word_update( register_length, remainder,
@@ -702,7 +747,7 @@ namespace detail
         \todo  Use this function somewhere so I can test it.
      */
     template < typename Register, typename Word >
-    void  augmented_crc_modulo_word_update( int register_length, Register
+    BOOST_CRC_CONSTEXPR  void  augmented_crc_modulo_word_update( int register_length, Register
      &remainder, Word new_dividend_bits, Register truncated_divisor, int
      word_length, bool reflect )
     {
@@ -763,7 +808,7 @@ namespace detail
         \todo  Use this function somewhere so I can test it.
      */
     template < typename Register >
-    inline  void  augmented_crc_modulo_update( int register_length, Register
+    BOOST_CRC_CONSTEXPR  inline  void  augmented_crc_modulo_update( int register_length, Register
      &remainder, bool new_dividend_bit, Register truncated_divisor )
     {
         augmented_crc_modulo_word_update( register_length, remainder,
@@ -811,7 +856,7 @@ namespace detail
 
             \return  \a x
          */
-        inline  static  value_type  reflect_q( value_type x )
+        BOOST_CRC_CONSTEXPR  inline  static  value_type  reflect_q( value_type x )
         { return x; }
     };
 
@@ -861,7 +906,7 @@ namespace detail
               <var>x</var> &amp; (2<sup><var>width_c</var>\::value</sup> -
               1) )
          */
-        inline  static  value_type  reflect_q( value_type x )
+        BOOST_CRC_CONSTEXPR  inline  static  value_type  reflect_q( value_type x )
         { return reflect_unsigned(x, width_c::value); }
     };
 
@@ -910,7 +955,7 @@ namespace detail
               <var>x</var> &amp; (2<sup><var>width_c</var>\::value</sup> -
               1) )
          */
-        inline  static  value_type  reflect_q( value_type x )
+        BOOST_CRC_CONSTEXPR  inline  static  value_type  reflect_q( value_type x )
         { return reflect_sub_byte(x, width_c::value); }
     };
 
@@ -1001,6 +1046,7 @@ namespace detail
           same composite mask table as using augmented-CRC routines.
      */
     template < int SubOrder, typename Register >
+    BOOST_CRC_CONSTEXPR
     std::array< Register, (UINTMAX_C( 1 ) << SubOrder) >
     make_partial_xor_products_table( int register_length, Register
      truncated_divisor, bool reflect )
@@ -1088,6 +1134,15 @@ namespace detail
             composite partial-product mask as the element.
          */
         typedef std::array<value_type, table_size_c::value>  array_type;
+
+#if BOOST_CRC_CONSTEXPR_ENABLED
+        /** \brief A global array for the mapping table
+
+         */
+        static inline constexpr array_type table = make_partial_xor_products_table<unit_width_c::value>(
+             width_c::value, poly_c::value, refin_c::value );
+#endif
+
         /** \brief  Create a global array for the mapping table
 
             Creates an instance of a partial-product array with this class's
@@ -1096,13 +1151,17 @@ namespace detail
             \return  A reference to a immutable array giving the partial-product
               update XOR map for each potential sub-unit value.
          */
-        static  array_type const &  get_table()
+        BOOST_CRC_CONSTEXPR  static  array_type const &  get_table()
         {
+#if BOOST_CRC_CONSTEXPR_ENABLED
+            return table;
+#else
             static  array_type const  table =
              make_partial_xor_products_table<unit_width_c::value>(
              width_c::value, poly_c::value, refin_c::value );
 
             return table;
+#endif
         }
     };
 
@@ -1144,10 +1203,10 @@ namespace detail
 
             \return  The updated remainder
          */
-        static  value_type  augmented_crc_update( value_type remainder, unsigned
+        BOOST_CRC_CONSTEXPR  static  value_type  augmented_crc_update( value_type remainder, unsigned
          char const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
-            static  array_type const &  table = base_type::get_table();
+            array_type const &  table = base_type::get_table();
 
             while ( new_dividend_byte_count-- )
             {
@@ -1175,10 +1234,10 @@ namespace detail
 
             \return  The updated remainder
          */
-        static  value_type  crc_update( value_type remainder, unsigned char
+        BOOST_CRC_CONSTEXPR  static  value_type  crc_update( value_type remainder, unsigned char
          const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
-            static  array_type const &  table = base_type::get_table();
+            array_type const &  table = base_type::get_table();
 
             while ( new_dividend_byte_count-- )
             {
@@ -1235,10 +1294,10 @@ namespace detail
 
             \return  The updated, reflected remainder
          */
-        static  value_type  augmented_crc_update( value_type remainder, unsigned
+        BOOST_CRC_CONSTEXPR  static  value_type  augmented_crc_update( value_type remainder, unsigned
          char const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
-            static  array_type const &  table = base_type::get_table();
+            array_type const &  table = base_type::get_table();
 
             while ( new_dividend_byte_count-- )
             {
@@ -1268,10 +1327,10 @@ namespace detail
 
             \return  The updated, reflected remainder
          */
-        static  value_type  crc_update( value_type remainder, unsigned char
+        BOOST_CRC_CONSTEXPR  static  value_type  crc_update( value_type remainder, unsigned char
          const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
-            static  array_type const &  table = base_type::get_table();
+            array_type const &  table = base_type::get_table();
 
             while ( new_dividend_byte_count-- )
             {
@@ -1357,7 +1416,7 @@ namespace detail
 
             \todo  Use this function somewhere so I can test it.
          */
-        static  value_type  augmented_crc_update( value_type remainder, unsigned
+        BOOST_CRC_CONSTEXPR  static  value_type  augmented_crc_update( value_type remainder, unsigned
          char const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
             //static  array_type const &  table = base_type::get_table();
@@ -1383,7 +1442,7 @@ namespace detail
 
             \return  The updated remainder
          */
-        static  value_type  crc_update( value_type remainder, unsigned char
+        BOOST_CRC_CONSTEXPR  static  value_type  crc_update( value_type remainder, unsigned char
          const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
             //static  array_type const &  table = base_type::get_table();
@@ -1441,7 +1500,7 @@ namespace detail
 
             \todo  Use this function somewhere so I can test it.
          */
-        static  value_type  augmented_crc_update( value_type remainder, unsigned
+        BOOST_CRC_CONSTEXPR  static  value_type  augmented_crc_update( value_type remainder, unsigned
          char const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
             //static  array_type const &  table = base_type::get_table();
@@ -1470,7 +1529,7 @@ namespace detail
 
             \return  The updated, reflected remainder
          */
-        static  value_type  crc_update( value_type remainder, unsigned char
+        BOOST_CRC_CONSTEXPR  static  value_type  crc_update( value_type remainder, unsigned char
          const *new_dividend_bytes, std::size_t new_dividend_byte_count)
         {
             //static  array_type const &  table = base_type::get_table();
@@ -1590,6 +1649,7 @@ namespace detail
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 crc_basic<Bits>::crc_basic
 (
     value_type  truncated_polynomial,
@@ -1615,6 +1675,7 @@ crc_basic<Bits>::crc_basic
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 typename crc_basic<Bits>::value_type
 crc_basic<Bits>::get_truncated_polynominal
 (
@@ -1633,6 +1694,7 @@ crc_basic<Bits>::get_truncated_polynominal
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 typename crc_basic<Bits>::value_type
 crc_basic<Bits>::get_initial_remainder
 (
@@ -1652,6 +1714,7 @@ crc_basic<Bits>::get_initial_remainder
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 typename crc_basic<Bits>::value_type
 crc_basic<Bits>::get_final_xor_value
 (
@@ -1669,6 +1732,7 @@ crc_basic<Bits>::get_final_xor_value
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 bool
 crc_basic<Bits>::get_reflect_input
 (
@@ -1685,6 +1749,7 @@ crc_basic<Bits>::get_reflect_input
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 bool
 crc_basic<Bits>::get_reflect_remainder
 (
@@ -1708,6 +1773,7 @@ crc_basic<Bits>::get_reflect_remainder
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 typename crc_basic<Bits>::value_type
 crc_basic<Bits>::get_interim_remainder
 (
@@ -1731,6 +1797,7 @@ crc_basic<Bits>::get_interim_remainder
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 void
 crc_basic<Bits>::reset
 (
@@ -1754,6 +1821,7 @@ crc_basic<Bits>::reset
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 void
 crc_basic<Bits>::reset
 (
@@ -1771,6 +1839,7 @@ crc_basic<Bits>::reset
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 void
 crc_basic<Bits>::process_bit
 (
@@ -1796,6 +1865,7 @@ crc_basic<Bits>::process_bit
       CRCs.
  */
 template < std::size_t Bits >
+BOOST_CRC_CONSTEXPR
 void
 crc_basic<Bits>::process_bits
 (
@@ -1827,6 +1897,7 @@ crc_basic<Bits>::process_bits
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 void
 crc_basic<Bits>::process_byte
 (
@@ -1924,6 +1995,7 @@ crc_basic<Bits>::process_bytes
  */
 template < std::size_t Bits >
 inline
+BOOST_CRC_CONSTEXPR
 typename crc_basic<Bits>::value_type
 crc_basic<Bits>::checksum
 (
@@ -1960,6 +2032,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 BOOST_CRC_OPTIMAL_NAME::crc_optimal
 (
     value_type  init_rem  // = initial_remainder
@@ -1973,6 +2046,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 typename BOOST_CRC_OPTIMAL_NAME::value_type
 BOOST_CRC_OPTIMAL_NAME::get_truncated_polynominal
 (
@@ -1986,6 +2060,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 typename BOOST_CRC_OPTIMAL_NAME::value_type
 BOOST_CRC_OPTIMAL_NAME::get_initial_remainder
 (
@@ -1999,6 +2074,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 typename BOOST_CRC_OPTIMAL_NAME::value_type
 BOOST_CRC_OPTIMAL_NAME::get_final_xor_value
 (
@@ -2012,6 +2088,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 bool
 BOOST_CRC_OPTIMAL_NAME::get_reflect_input
 (
@@ -2025,6 +2102,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 bool
 BOOST_CRC_OPTIMAL_NAME::get_reflect_remainder
 (
@@ -2038,6 +2116,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 typename BOOST_CRC_OPTIMAL_NAME::value_type
 BOOST_CRC_OPTIMAL_NAME::get_interim_remainder
 (
@@ -2066,6 +2145,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 void
 BOOST_CRC_OPTIMAL_NAME::reset
 (
@@ -2085,6 +2165,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 void
 BOOST_CRC_OPTIMAL_NAME::process_byte
 (
@@ -2141,6 +2222,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 typename BOOST_CRC_OPTIMAL_NAME::value_type
 BOOST_CRC_OPTIMAL_NAME::checksum
 (
@@ -2173,6 +2255,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 void
 BOOST_CRC_OPTIMAL_NAME::operator ()
 (
@@ -2202,6 +2285,7 @@ template < std::size_t Bits, BOOST_CRC_PARM_TYPE TruncPoly,
            BOOST_CRC_PARM_TYPE InitRem, BOOST_CRC_PARM_TYPE FinalXor,
            bool ReflectIn, bool ReflectRem >
 inline
+BOOST_CRC_CONSTEXPR
 typename BOOST_CRC_OPTIMAL_NAME::value_type
 BOOST_CRC_OPTIMAL_NAME::operator ()
 (
